@@ -308,7 +308,77 @@ td {
 }
 .option.conflict input{ pointer-events:auto; }
 
+/* Partiel : autorisé, affiche "Restant XX min avant/après" */
+.option.partial{
+  opacity:.9;
+  position: relative;
+  outline: 1px dashed rgba(255,165,0,.35);
+}
+.option.partial::after{
+  content: "Restant " attr(data-remmin) " min " attr(data-dir);
+  position:absolute; top:8px; right:12px;
+  font-size:11px; padding:2px 6px; border-radius:999px;
+  background: rgba(255,165,0,.18);
+  color:#ffb84d;
+  border:1px solid rgba(255,165,0,.35);
+}
 
+/* Conflit dur : moins de WATCHABLE_MIN */
+.option.conflict{
+  opacity:.6;
+  filter: grayscale(.15);
+  position: relative;
+}
+.option.conflict::after{
+  content:"Restant " attr(data-remmin) " min " attr(data-dir) " (conflit)";
+  position:absolute; top:8px; right:12px;
+  font-size:11px; padding:2px 6px; border-radius:999px;
+  background: rgba(255,0,230,.18);
+  color:#ff8ae8;
+  border:1px solid rgba(255,0,230,.35);
+}
+/* Petite ligne d’info sur le chevauchement */
+.option .ov-note{
+  margin-top: 6px;
+  font-size: 11px;
+  line-height: 1.25;
+  color: #cfcfe6;
+  opacity: .9;
+}
+.option.partial .ov-note{ color:#ffb84d; }     /* partiel = orange */
+.option.conflict .ov-note{ color:#ff8ae8; }    /* conflit dur = rose */
+
+/* Badge de note dans le tableau */
+.note-badge{
+  display:inline-block;
+  font-size:11px;
+  padding:2px 8px;
+  border-radius:999px;
+  border:1px solid;
+  white-space:nowrap;
+}
+.note-badge.partial{
+  color:#ffb84d; background:rgba(255,165,0,.12); border-color:rgba(255,165,0,.35);
+}
+.note-badge.conflict{
+  color:#ff8ae8; background:rgba(255,0,230,.12); border-color:rgba(255,0,230,.35);
+}
+
+/* Mini timeline */
+.tl-cell{
+  width:260px; height:22px; position:relative;
+  background:#f5f7fa; border:1px solid #e2e8f0; border-radius:6px;
+  overflow:hidden;
+}
+.tl-range{
+  position:absolute; top:0; bottom:0; border-radius:6px;
+  background: linear-gradient(90deg, #ff00e6, #00e5ff);
+  opacity:.85;
+}
+.tl-label{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-size:11px; color:#0b1320; font-weight:700; mix-blend:normal;
+}
 
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -339,6 +409,28 @@ td {
 	  /* --- GARDE ICI TON OBJET donneesFestival TEL QUEL --- */
 		let donneesFestival = {
 		  "Samedi 27": [
+		  		{ heure: "20h30", artistes: [
+				  { nom: "HIBI", style: "Trancy/Groovy", scene: "Organik Stage", fin: "22h00" },
+				]},
+				{ heure: "21h00", artistes: [
+				  { nom: "ASDEK", style: "Bass House", scene: "Bassquake Stage", fin: "21h45" },
+				]},
+				{ heure: "21h10", artistes: [
+				  { nom: "HILIGHT TRIBE", style: "Trance / Tribal (Live)", scene: "Lunar Stage", fin: "22h40" },
+				]},
+				{ heure: "21h45", artistes: [
+				  { nom: "MALAA × ALTER EGO", style: "House / Bass House", scene: "Bassquake Stage", fin: "23h15" },
+				]},
+				{ heure: "22h00", artistes: [
+				  { nom: "PEAKSOU", style: "Trance/Hypertechno", scene: "Organik Stage", fin: "23h00" },
+				]},
+				{ heure: "23h00", artistes: [
+				  { nom: "PERCEVAL", style: "Psytrance", scene: "Lunar Stage", fin: "23h55" },
+				  { nom: "MANIL", style: "Hard Techno/Groove", scene: "Organik Stage", fin: "00h00" },
+				]},
+				{ heure: "23h15", artistes: [
+				  { nom: "ZOMBOY", style: "Dubstep", scene: "Bassquake Stage", fin: "00h15" },
+				]},
 				{ heure: "00h00", artistes: [
 				  { nom: "LB AKA LABAT", style: "Electro / House", scene: "Lunar Stage", fin: "1h00" },
 				  { nom: "25EMEHEURE", style: "Hard Techno", scene: "Organik Stage", fin: "1h30" },
@@ -380,30 +472,31 @@ td {
 				  { nom: "MANDIDEXTROUS", style: "Jungle / 160-170", scene: "Bassquake Stage", fin: "6h15" },
 				  { nom: "EARGASM GOD", style: "Techno", scene: "Lunar Stage", fin: "6h15" },
 				]},
-				{ heure: "20h30", artistes: [
-				  { nom: "HIBI", style: "Trancy/Groovy", scene: "Organik Stage", fin: "22h00" },
-				]},
-				{ heure: "21h00", artistes: [
-				  { nom: "ASDEK", style: "Bass House", scene: "Bassquake Stage", fin: "21h45" },
-				]},
-				{ heure: "21h10", artistes: [
-				  { nom: "HILIGHT TRIBE", style: "Trance / Tribal (Live)", scene: "Lunar Stage", fin: "22h40" },
-				]},
-				{ heure: "21h45", artistes: [
-				  { nom: "MALAA × ALTER EGO", style: "House / Bass House", scene: "Bassquake Stage", fin: "23h15" },
-				]},
-				{ heure: "22h00", artistes: [
-				  { nom: "PEAKSOU", style: "Trance/Hypertechno", scene: "Organik Stage", fin: "23h00" },
-				]},
-				{ heure: "23h00", artistes: [
-				  { nom: "PERCEVAL", style: "Psytrance", scene: "Lunar Stage", fin: "23h55" },
-				  { nom: "MANIL", style: "Hard Techno/Groove", scene: "Organik Stage", fin: "00h00" },
-				]},
-				{ heure: "23h15", artistes: [
-				  { nom: "ZOMBOY", style: "Dubstep", scene: "Bassquake Stage", fin: "00h15" },
-				]},
 		  ],
 		  "Vendredi 26": [
+		  		{ heure: "21h00", artistes: [
+				  { nom: "SKONE & PROTOSKEED present SILENCE", style: "Tekno", scene: "Warzone Stage", fin: "22h00" },
+				  { nom: "NICE KEED", style: "Fast & Hard Techno", scene: "Pulsar Stage", fin: "22h15" },
+				]},
+				{ heure: "22h00", artistes: [
+				  { nom: "SPICE UP!", style: "Tekno", scene: "Warzone Stage", fin: "23h00" },
+				  { nom: "LUX", style: "Hard Trance", scene: "2much stage", fin: "23h30" },
+				]},
+				{ heure: "22h15", artistes: [
+				  { nom: "ZORZA", style: "Hyper Techno", scene: "Pulsar Stage", fin: "23h15" },
+				]},
+				{ heure: "23h00", artistes: [
+				  { nom: "MAD DOG", style: "Hardcore italien", scene: "Warzone Stage", fin: "23h45" },
+				]},
+				{ heure: "23h15", artistes: [
+				  { nom: "ACENDANT VIERGE", style: "Avant-garde Electro", scene: "Pulsar Stage", fin: "00h15" },
+				]},
+				{ heure: "23h30", artistes: [
+				  { nom: "SHOSHANA", style: "Hard Techno/Ghetto beats/Groove", scene: "2much stage", fin: "1h00" },
+				]},
+				{ heure: "23h45", artistes: [
+				  { nom: "VON BIKRAV", style: "Gangsta rap Gabber", scene: "Warzone Stage", fin: "00h30" },
+				]},
 				{ heure: "00h15", artistes: [
 				  { nom: "999999999", style: "Acid Techno", scene: "Pulsar Stage", fin: "1h15" },
 				]},
@@ -446,29 +539,6 @@ td {
 				{ heure: "5h20", artistes: [
 				  { nom: "MAJOR CONSPIRACY b2b PARTYRAISER", style: "Hardcore Uptempo", scene: "Warzone Stage", fin: "6h15" },
 				]},
-				{ heure: "21h00", artistes: [
-				  { nom: "SKONE & PROTOSKEED present SILENCE", style: "Tekno", scene: "Warzone Stage", fin: "22h00" },
-				  { nom: "NICE KEED", style: "Fast & Hard Techno", scene: "Pulsar Stage", fin: "22h15" },
-				]},
-				{ heure: "22h00", artistes: [
-				  { nom: "SPICE UP!", style: "Tekno", scene: "Warzone Stage", fin: "23h00" },
-				  { nom: "LUX", style: "Hard Trance", scene: "2much stage", fin: "23h30" },
-				]},
-				{ heure: "22h15", artistes: [
-				  { nom: "ZORZA", style: "Hyper Techno", scene: "Pulsar Stage", fin: "23h15" },
-				]},
-				{ heure: "23h00", artistes: [
-				  { nom: "MAD DOG", style: "Hardcore italien", scene: "Warzone Stage", fin: "23h45" },
-				]},
-				{ heure: "23h15", artistes: [
-				  { nom: "ACENDANT VIERGE", style: "Avant-garde Electro", scene: "Pulsar Stage", fin: "00h15" },
-				]},
-				{ heure: "23h30", artistes: [
-				  { nom: "SHOSHANA", style: "Hard Techno/Ghetto beats/Groove", scene: "2much stage", fin: "1h00" },
-				]},
-				{ heure: "23h45", artistes: [
-				  { nom: "VON BIKRAV", style: "Gangsta rap Gabber", scene: "Warzone Stage", fin: "00h30" },
-				]},
 		  ],
 		};
 
@@ -494,6 +564,63 @@ td {
 		  if (s != null && e != null && e <= s) e += 24 * 60;      // ← clé : passe-minuit
 		  return [s, e];
 		}
+		// minutes de chevauchement (0 si aucun) — gère les slots qui passent minuit (déjà normalisés par intervalFor)
+		function overlapMinutes(a, b){
+		  const start = Math.max(a[0], b[0]);
+		  const end   = Math.min(a[1], b[1]);
+		  return Math.max(0, end - start);
+		}
+
+		function durationOf(range){ return range[1] - range[0]; }
+		const WATCHABLE_MIN = 30;
+		const ROLLOVER_MIN = 8 * 60;   // tout set qui commence avant 08:00 est considéré "lendemain"
+
+		
+		function overlapEdge(cur, other){
+		  // chevauchement = [max(starts), min(ends)]
+		  const ovStart = Math.max(cur[0], other[0]);
+		  const ovEnd   = Math.min(cur[1], other[1]);
+		  if (ovStart === other[0]) return 'début'; // chevauche le début de "other"
+		  if (ovEnd   === other[1]) return 'fin';   // chevauche la fin de "other"
+		  // sinon au milieu : on choisit le côté le plus proche pour rester lisible
+		  return (ovStart - other[0]) <= (other[1] - ovEnd) ? 'début' : 'fin';
+		}
+
+		// Retourne pour un intervalle `cur` son "pire" restant vs une liste d'intervalles sélectionnés
+		// => { minRemaining, dir }  dir ∈ {'avant','apres','mix','none'}
+		function remainingVsSelected(cur, selectedRanges){
+		  if (!selectedRanges.length) return { minRemaining: durationOf(cur), dir: 'none' };
+
+		  let minRemaining = Infinity;
+		  let dirForMin = 'mix';
+
+		  for (const sel of selectedRanges){
+			const ov = overlapMinutes(cur, sel.range);
+			const remaining = durationOf(cur) - ov;
+
+			// Détermination de la direction principale du restant vs ce `sel`
+			let dir = 'mix';
+			if (sel.range[1] <= cur[0]) {        // sel finit avant que cur commence
+			  dir = 'avant';
+			} else if (sel.range[0] >= cur[1]) { // sel commence après que cur finisse
+			  dir = 'apres';
+			} else {
+			  // il y a recouvrement : on regarde où est la plus grosse "branche" restante
+			  const avant = Math.max(0, cur[0] - sel.range[0]);
+			  const apres = Math.max(0, sel.range[1] - cur[1]);
+			  if (avant > apres) dir = 'avant';
+			  else if (apres > avant) dir = 'apres';
+			  else dir = 'mix';
+			}
+
+			if (remaining < minRemaining){
+			  minRemaining = remaining;
+			  dirForMin = dir;
+			}
+		  }
+		  return { minRemaining: Math.max(0, minRemaining), dir: dirForMin };
+		}
+
 
 		// chevauchement strict (si b commence avant que a finisse ET b finit après que a commence)
 		function overlap(a,b){ return a[0] < b[1] && b[0] < a[1]; }
@@ -516,20 +643,69 @@ td {
 			l.classList.remove('conflict');
 		  });
 
-		  // 3) Marque en conflit (on NE désactive PAS le input)
-		  document.querySelectorAll(`.option[data-jour="${jour}"]`).forEach(l=>{
-			const inp = l.querySelector('input[type="radio"]');
-			if (!inp || inp.value === 'Aucun') return; // "Aucun" jamais en conflit
+			// 3) Marque en conflit/partiel ET écrit une note "Chevauche XX min début/fin de NOM"
+			document.querySelectorAll(`.option[data-jour="${jour}"]`).forEach(l=>{
+			  const inp = l.querySelector('input[type="radio"]');
+			  const noteEl = l.querySelector('.ov-note');
+			  if (noteEl) noteEl.textContent = ''; // reset note
 
-			const s = parseInt(l.dataset.start ?? '', 10);
-			const e = parseInt(l.dataset.end   ?? '', 10);
-			if (isNaN(s) || isNaN(e)) return;
+			  if (!inp || inp.value === 'Aucun') return;
 
-			const isConflict = selectedIntervals.some(sel => sel.el !== l && overlap([s,e], sel.range));
-			if (isConflict){
-			  l.classList.add('conflict');     // habillage visuel uniquement
-			}
-		  });
+			  const s = parseInt(l.dataset.start ?? '', 10);
+			  const e = parseInt(l.dataset.end   ?? '', 10);
+			  if (isNaN(s) || isNaN(e)) return;
+
+			  const cur = [s,e];
+			  let maxOv = 0;
+			  let worstRemaining = Infinity;
+			  let worstDir = 'mix';
+			  let bestOther = null; // label de l'autre show le plus "impactant"
+
+			  for (const sel of selectedIntervals){
+				if (sel.el === l) continue;
+				const ov = overlapMinutes(cur, sel.range);
+				if (ov > 0){
+				  // suivi pour la note : garder celui avec le plus gros chevauchement
+				  if (ov > maxOv){
+					maxOv = ov;
+					bestOther = sel.el; // label DOM de l’autre sélectionné
+				  }
+				  const rem = durationOf(cur) - ov;
+				  if (rem < worstRemaining){
+					worstRemaining = rem;
+					// direction globale (avant/après/mix) – on la réutilise moins maintenant
+					worstDir = remainingVsSelected(cur, [sel]).dir;
+				  }
+				}
+			  }
+
+			  l.classList.remove('conflict','partial');
+			  delete l.dataset.remmin;
+			  delete l.dataset.dir;
+
+			  if (!selectedIntervals.length || maxOv === 0){
+				return; // rien de choisi ou pas de recouvrement -> pas de badge/note
+			  }
+
+			  // Remplir la note lisible si on a un "other"
+			  if (bestOther){
+				const otherName = bestOther.querySelector('strong')?.textContent || 'autre show';
+				const edge = overlapEdge(cur, [
+				  parseInt(bestOther.dataset.start,10),
+				  parseInt(bestOther.dataset.end,10)
+				]);
+				if (noteEl) noteEl.textContent = `Chevauche ${maxOv} min ${edge} de ${otherName}`;
+			  }
+
+			  // Décision visuelle: conflit si le "pire restant" < seuil, sinon partiel
+			  if (worstRemaining < WATCHABLE_MIN){
+				l.classList.add('conflict');
+				l.dataset.remmin = String(Math.max(0, worstRemaining));
+			  } else {
+				l.classList.add('partial');
+				l.dataset.remmin = String(Math.max(0, worstRemaining));
+			  }
+			});
 		}
 
 	  function demarrerChoix() {
@@ -581,10 +757,14 @@ td {
 			  const id = `${groupName}_art${idx}`;
 			  const opt = document.createElement('label');
 			  opt.className = 'option';
-			  // métadonnées pour le calcul des conflits
-			  opt.dataset.jour  = jour;
-			  opt.dataset.start = sMin ?? '';
-			  opt.dataset.end   = eMin ?? '';
+			// normalisation "lendemain" pour les sets après minuit (ex: 00h30–01h30)
+			let sNorm = sMin, eNorm = eMin;
+			if (sNorm != null && sNorm < ROLLOVER_MIN) { sNorm += 24*60; eNorm += 24*60; }
+
+			opt.dataset.jour  = jour;
+			opt.dataset.start = sNorm ?? '';
+			opt.dataset.end   = eNorm ?? '';
+
 
 			  opt.innerHTML = `
 				<input type="radio" id="${id}" name="${groupName}" value="${a.nom}">
@@ -592,7 +772,9 @@ td {
 				<small>${a.style} <span style="opacity:.6">•</span> ${a.scene}<br>
 				<span class="time">${slot.heure}${endStr ? '–'+endStr : ''}</span></small>
 			  `;
-
+				const note = document.createElement('div');
+				note.className = 'ov-note';
+				opt.appendChild(note);
 			  options.appendChild(opt);
 			});
 
@@ -630,47 +812,151 @@ td {
 		joursChoisis.forEach(jour => {
 		  if (!donneesFestival[jour]) return;
 
-		  const titre = document.createElement('h2');
-		  titre.className = 'jour-titre';
-		  titre.textContent = jour;
-		  titre.style.marginTop = '50px';
-		  titre.style.marginBottom = '20px';
-		  listeResultats.appendChild(titre);
+			// ---- Titre de jour
+			const titre = document.createElement('h2');
+			titre.className = 'jour-titre';
+			titre.textContent = jour;
+			listeResultats.appendChild(titre);
 
-		  const table = document.createElement('table');
-		  table.style.margin = '0 auto 40px auto';
-		  table.style.borderCollapse = 'collapse';
-		  table.style.width = '100%';
-		  table.style.maxWidth = '1000px';
+			// ---- Récupère les choix sélectionnés (avec heures)
+			const selected = [];
+			(donneesFestival[jour] || []).forEach(slot => {
+			  const checked = document.querySelector(`input[name="${jour}_${slot.heure}"]:checked`);
+			  if (!checked || checked.value === "Aucun") return;
+			  const artiste = slot.artistes.find(a => a.nom === checked.value);
+			  if (!artiste) return;
+				const [sMin, eMin] = intervalFor(slot.heure, artiste.fin);
 
-		  const headerRow = document.createElement('tr');
-		  ['Heure', 'Artiste', 'Scène', 'Style'].forEach(text => {
-			const th = document.createElement('th');
-			th.style.cssText = headerStyle;
-			th.textContent = text;
-			headerRow.appendChild(th);
-		  });
-		  table.appendChild(headerRow);
+				// normalisation "lendemain" pour l’ordre et la timeline
+				let sNorm = sMin, eNorm = eMin;
+				if (sNorm != null && sNorm < ROLLOVER_MIN) { sNorm += 24*60; eNorm += 24*60; }
 
-		  donneesFestival[jour].forEach(slot => {
-			const radios = document.querySelectorAll(`input[name="${jour}_${slot.heure}"]`);
-			radios.forEach(radio => {
-			  if (radio.checked && radio.value !== "Aucun") {
-				const artiste = slot.artistes.find(a => a.nom === radio.value);
-				if (!artiste) return;
-				const row = document.createElement('tr');
-				[slot.heure, artiste.nom, artiste.scene, artiste.style].forEach(text => {
-				  const td = document.createElement('td');
-				  td.style.cssText = cellStyle;
-				  td.textContent = text;
-				  row.appendChild(td);
+				selected.push({
+				  start: sNorm, end: eNorm,                      // ← valeurs normalisées pour TRI & TIMELINE
+				  debutStr: slot.heure,
+				  finStr: toHHmm(eMin % (24*60)),                // ← affichage "humain" (00h15, 01h00…)
+				  nom: artiste.nom, scene: artiste.scene, style: artiste.style
 				});
-				table.appendChild(row);
-			  }
 			});
-		  });
 
-		  listeResultats.appendChild(table);
+			// Rien de sélectionné pour ce jour
+			if (!selected.length){
+			  const p = document.createElement('p');
+			  p.textContent = "Aucun choix validé pour ce jour.";
+			  listeResultats.appendChild(p);
+			  return;
+			}
+
+			// ---- Tri par début
+			selected.sort((a,b)=>a.start-b.start);
+
+			// ---- Calcul des notes et du statut (partial / conflict)
+			const WATCHABLE_MIN = 30;
+			function overlapMinutes(a,b){
+			  const st = Math.max(a.start, b.start);
+			  const en = Math.min(a.end,   b.end);
+			  return Math.max(0, en - st);
+			}
+			function durationOf(x){ return x.end - x.start; }
+			function overlapEdge(cur, other){
+			  const ovStart = Math.max(cur.start, other.start);
+			  const ovEnd   = Math.min(cur.end,   other.end);
+			  if (ovStart === other.start) return 'début';
+			  if (ovEnd   === other.end)   return 'fin';
+			  return (ovStart - other.start) <= (other.end - ovEnd) ? 'début' : 'fin';
+			}
+
+			const enriched = selected.map((cur, idx)=>{
+			  // on cherche le chevauchement le plus “impactant”
+			  let maxOv = 0, bestOtherIndex = -1, worstRemaining = durationOf(cur);
+			  for (let j=0;j<selected.length;j++){
+				if (j===idx) continue;
+				const other = selected[j];
+				const ov = overlapMinutes(cur, other);
+				if (ov>0){
+				  if (ov>maxOv){ maxOv = ov; bestOtherIndex = j; }
+				  const remaining = durationOf(cur) - ov;
+				  if (remaining < worstRemaining) worstRemaining = remaining;
+				}
+			  }
+			  let status = null, note = "";
+			  if (maxOv>0 && bestOtherIndex>=0){
+				const other = selected[bestOtherIndex];
+				const edge = overlapEdge(cur, other); // "début" ou "fin" de l'autre
+				if (worstRemaining < WATCHABLE_MIN){
+				  status = 'conflict';
+				  note = `Chevauche ${maxOv} min ${edge} de ${other.nom}`;
+				} else {
+				  status = 'partial';
+				  note = `Chevauche ${maxOv} min ${edge} de ${other.nom}`;
+				}
+			  }
+			  return {...cur, status, note};
+			});
+
+			// ---- Mini-timeline: échelle commune
+			const minStart = Math.min(...enriched.map(x=>x.start));
+			const maxEnd   = Math.max(...enriched.map(x=>x.end));
+			const span     = Math.max(1, maxEnd - minStart); // sûreté
+
+			// ---- Création du tableau
+			const table = document.createElement('table');
+
+			// En-têtes (Début / Fin / Artiste / Scène / Style / Note / Timeline)
+			const headerRow = document.createElement('tr');
+			['Début','Fin','Artiste','Scène','Style','Note','Timeline'].forEach(text => {
+			  const th = document.createElement('th');
+			  th.style.cssText = headerStyle;
+			  th.textContent = text;
+			  headerRow.appendChild(th);
+			});
+			table.appendChild(headerRow);
+
+			// Lignes
+			enriched.forEach(item=>{
+			  const tr = document.createElement('tr');
+
+			  // Début
+			  let td = document.createElement('td'); td.style.cssText = cellStyle; td.textContent = item.debutStr; tr.appendChild(td);
+			  // Fin
+			  td = document.createElement('td'); td.style.cssText = cellStyle; td.textContent = item.finStr; tr.appendChild(td);
+			  // Artiste
+			  td = document.createElement('td'); td.style.cssText = cellStyle; td.textContent = item.nom; tr.appendChild(td);
+			  // Scène
+			  td = document.createElement('td'); td.style.cssText = cellStyle; td.textContent = item.scene; tr.appendChild(td);
+			  // Style
+			  td = document.createElement('td'); td.style.cssText = cellStyle; td.textContent = item.style; tr.appendChild(td);
+			  // Note (badge)
+			  td = document.createElement('td'); td.style.cssText = cellStyle;
+			  if (item.note){
+				const b = document.createElement('span');
+				b.className = 'note-badge ' + (item.status || 'partial');
+				b.textContent = item.note;
+				td.appendChild(b);
+			  } else {
+				td.textContent = '';
+			  }
+			  tr.appendChild(td);
+
+			  // Timeline
+			  td = document.createElement('td'); td.style.cssText = cellStyle;
+			  const tl = document.createElement('div'); tl.className='tl-cell';
+			  const bar = document.createElement('div'); bar.className='tl-range';
+			  const leftPct  = ((item.start - minStart) / span) * 100;
+			  const widthPct = ((item.end   - item.start) / span) * 100;
+			  bar.style.left  = leftPct.toFixed(2) + '%';
+			  bar.style.width = widthPct.toFixed(2) + '%';
+			  const label = document.createElement('div'); label.className='tl-label';
+			  label.textContent = `${item.debutStr}–${item.finStr}`;
+			  tl.appendChild(bar); tl.appendChild(label);
+			  td.appendChild(tl);
+			  tr.appendChild(td);
+
+			  table.appendChild(tr);
+			});
+
+			listeResultats.appendChild(table);
+
 		});
 
 		// Bouton retour (unique)
@@ -703,13 +989,12 @@ td {
 		});
 	  }
 
-	  // Surbrillance (fallback si :has indisponible)
 		document.addEventListener('change', (e) => {
 		  if (!e.target.matches('.option input[type="radio"]')) return;
 
 		  const input = e.target;
-		  const group = input.name;                 // ex: "Vendredi 26_23h15"
-		  const jour  = group.split('_')[0];        // ex: "Vendredi 26"
+		  const group = input.name;                 // ex: "Vendredi_23h15"
+		  const jour  = group.split('_')[0];        // "Vendredi"
 
 		  // 1) Visuel "selected" dans le groupe courant
 		  document.querySelectorAll(`input[name="${group}"]`).forEach(inp => {
@@ -717,13 +1002,16 @@ td {
 			if (card) card.classList.toggle('selected', inp.checked && inp === input);
 		  });
 
-		  // 2) Si on a choisi un ARTISTE (pas "Aucun"), enlever les sélections qui se chevauchent
+		  // 2) Si on a choisi un ARTISTE (pas "Aucun"), on ne désélectionne les autres
+		  //    que si EUX n'ont plus assez de "restant" (< WATCHABLE_MIN)
 		  const curLabel = input.closest('.option');
 		  const s = parseInt(curLabel?.dataset.start || '', 10);
 		  const eEnd = parseInt(curLabel?.dataset.end   || '', 10);
 
 		  if (input.value !== 'Aucun' && !isNaN(s) && !isNaN(eEnd)) {
-			// Pour chaque autre créneau du même jour…
+			const curRange = [s, eEnd];
+
+			// Parcourt tous les autres créneaux choisis de ce jour
 			(donneesFestival[jour] || []).forEach(slot => {
 			  const gname = `${jour}_${slot.heure}`;
 			  if (gname === group) return; // pas le créneau courant
@@ -734,24 +1022,37 @@ td {
 			  const lab = checked.closest('.option');
 			  const s2 = parseInt(lab?.dataset.start || '', 10);
 			  const e2 = parseInt(lab?.dataset.end   || '', 10);
+			  if (isNaN(s2) || isNaN(e2)) return;
 
-			  if (!isNaN(s2) && !isNaN(e2) && overlap([s, eEnd], [s2, e2])) {
-				// Conflit -> remettre "Aucun" sur ce créneau
-				const none = document.querySelector(`input[name="${gname}"][value="Aucun"]`);
-				if (none) {
-				  none.checked = true;
-				  document.querySelectorAll(`input[name="${gname}"]`).forEach(inp => {
-					const c = inp.closest('.option');
-					if (c) c.classList.toggle('selected', inp.checked);
-				  });
+			  const otherRange = [s2, e2];
+			  const ov = overlapMinutes(curRange, otherRange);
+
+				if (ov > 0){
+				  const remainingOther = durationOf(otherRange) - ov;
+				  const remainingNew   = durationOf(curRange)  - ov;
+
+				  // Nouvelle règle :
+				  // - si le NOUVEAU garde >= seuil (ex. 30'), on autorise la cohabitation (on ne touche pas à l'autre)
+				  // - si chacun garde >= seuil -> cohabitation aussi
+				  // - on ne dé-sélectionne l'autre QUE si LES DEUX < seuil → on garde le nouveau, on met l'autre à "Aucun"
+				  if (remainingNew < WATCHABLE_MIN && remainingOther < WATCHABLE_MIN){
+					const none = document.querySelector(`input[name="${gname}"][value="Aucun"]`);
+					if (none) {
+					  none.checked = true;
+					  document.querySelectorAll(`input[name="${gname}"]`).forEach(inp => {
+						const c = inp.closest('.option');
+						if (c) c.classList.toggle('selected', inp.checked);
+					  });
+					}
+				  }
 				}
-			  }
 			});
 		  }
 
-		  // 3) Recalcule l’habillage de conflit pour le jour
+		  // 3) Recalcule l’habillage de conflit/partiel pour le jour
 		  updateConflictsForDay(jour);
 		});
+
 
 		// Recalcule tous les jours sélectionnés
 		function recomputeAllConflicts(){
@@ -769,4 +1070,3 @@ td {
 
 </body>
 </html>
-
