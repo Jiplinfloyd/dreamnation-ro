@@ -169,55 +169,23 @@ td {
 }
 
 .jour-titre {
-  margin: 40px 0 10px;
-  font-size: 2.2em;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 2px;
+  margin: 50px 0 20px;
+  font-size: 1.8em;
   text-align: center;
-  background: linear-gradient(90deg, #ff00e6, #00e5ff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-fill-color: transparent;
-  text-shadow: 0 0 18px rgba(255,0,230,0.25),
-               0 0 22px rgba(0,229,255,0.25);
+  color: #4b0082; /* violet festival */
+  font-weight: 700;
   position: relative;
-  display: inline-block;
-  padding-bottom: 10px;
 }
-
 .jour-titre::after {
   content: "";
   display: block;
-  height: 4px;
-  margin: 10px auto 0;
-  width: 80%;
-  max-width: 400px;
+  width: 80px;
+  height: 3px;
+  margin: 6px auto 0;
+  background: linear-gradient(90deg, #ff00e6, #00e5ff);
   border-radius: 2px;
-  background: linear-gradient(90deg, #ff00e6, #00e5ff);
-  box-shadow: 0 0 12px rgba(255,0,230,.6), 0 0 16px rgba(0,229,255,.6);
 }
 
-
-.jour-titre {
-  margin: 40px 0 20px;
-  font-size: 2.2em;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  text-align: center;
-  color: #fff;
-
-  background: linear-gradient(90deg, #ff00e6, #00e5ff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  text-fill-color: transparent;
-
-  text-shadow: 0 0 18px rgba(255,0,230,0.25),
-               0 0 22px rgba(0,229,255,0.25);
-}
 
 .option-none {
   width: 120px;      /* largeur fixe */
@@ -293,11 +261,6 @@ td {
 .option .time { opacity:.9; }
 
 /* Afficher clairement les conflits horaires */
-.option.conflict{
-  opacity:.45;
-  filter: grayscale(.15);
-  position: relative;
-}
 .option.conflict::after{
   content:"Conflit horaire";
   position:absolute; top:8px; right:12px;
@@ -366,7 +329,7 @@ td {
 
 /* Mini timeline */
 .tl-cell{
-  width:260px; height:22px; position:relative;
+  width:100%; height:22px; position:relative;   /* ← plus de largeur fixe */
   background:#f5f7fa; border:1px solid #e2e8f0; border-radius:6px;
   overflow:hidden;
 }
@@ -380,11 +343,89 @@ td {
   font-size:11px; color:#0b1320; font-weight:700; mix-blend:normal;
 }
 
+/* === MODE PDF : couleurs claires + largeur sûre === */
+body.pdf-mode { background:#fff; color:#111; }
+body.pdf-mode #resultats { color:#111; }
+
+/* tableau lisible à l'impression */
+body.pdf-mode table { background:#fff; border-color:#7b61ff; }
+body.pdf-mode th { background:#eef0ff; color:#111; }
+body.pdf-mode td { background:#fff; }
+
+/* badges de note : fond clair + texte foncé */
+body.pdf-mode .note-badge.partial{
+  color:#8a5a00; background:#fff; border-color:#f0c27a;
+}
+body.pdf-mode .note-badge.conflict{
+  color:#7a2a6e; background:#fff; border-color:#d29ad0;
+}
+
+/* timeline : fond blanc, bord violet doux, barre gris neutre */
+body.pdf-mode .tl-cell{ background:#fff; border-color:#7b61ff; }
+body.pdf-mode .tl-range{
+  background:#999; opacity:.35;  /* pas de dégradé flashy sur le PDF */
+}
+body.pdf-mode #liste-resultats { max-width: 100% !important; }
+body.pdf-mode table { width: 100% !important; table-layout: fixed; }
+
+/* ——— TABLEAU : largeur fixe & compacité en PDF ——— */
+body.pdf-mode table { table-layout: fixed; width: 100% !important; }
+body.pdf-mode th, body.pdf-mode td { padding: 6px 8px !important; font-size: 12px !important; }
+
+/* Heures : pas de retour à la ligne */
+.nowrap { white-space: nowrap; }
+
+/* Timeline : taille raisonnable en PDF */
+body.pdf-mode .tl-cell { height: 18px; }
+body.pdf-mode .tl-label { font-size: 10px; }
+
+/* Empêche la timeline de déborder en PDF */
+body.pdf-mode .tl-cell{
+  width: 100% !important;     /* prend tout l'espace de la colonne */
+  max-width: 100% !important;
+}
+
+/* sécurité : pas de dépassement horizontal */
+body.pdf-mode .tl-range{ right: 0; }      /* au cas où */
+body.pdf-mode .tl-cell, 
+body.pdf-mode .tl-label{ overflow: hidden; }
+
+
+/* ===== PDF MODE – largeur sûre et texte qui s'enroule ===== */
+body.pdf-mode * { box-sizing: border-box !important; }
+
+body.pdf-mode #liste-resultats,
+body.pdf-mode .jour-section { width: 100% !important; max-width: 100% !important; }
+
+body.pdf-mode table {
+  table-layout: fixed;
+  width: 100% !important;
+  border-collapse: collapse;
+}
+
+body.pdf-mode th, body.pdf-mode td {
+  padding: 6px 8px !important;
+  font-size: 12px !important;
+}
+
+/* Colonne NOTE : autoriser l’enroulement + empêcher l'overflow */
+td.col-note { overflow: hidden; }
+.note-badge{
+  display: block;            /* occupe toute la largeur de la cellule */
+  white-space: normal;       /* autorise retour à la ligne */
+  word-break: break-word;    /* casse proprement si besoin */
+  line-height: 1.2;
+  max-width: 100%;
+}
+body.pdf-mode .note-badge{ font-size: 11px; }
+
+
+
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
-  <h1>🎺 Fais ton choix pour chaque créneau</h1>
+  <h1>Fais ton choix pour chaque créneau</h1>
 
   <div id="selection-jours">
     <p>Quels jours fais-tu au festival ?</p>
@@ -395,7 +436,7 @@ td {
 
   <div id="choix" class="hidden"></div>
   <div id="resultats" class="hidden">
-  <h2>🎉 Ton Running Order</h2>
+  <h2>Ton Running Order</h2>
   <ul id="liste-resultats"></ul>
   <button onclick="genererPDF()">📅 Télécharger en PDF</button>
 </div>
@@ -797,26 +838,30 @@ td {
 		}
 
 
-	  function afficherResultats() {
-		const resultatsDiv = document.getElementById('resultats');
-		const listeResultats = document.getElementById('liste-resultats');
+		function afficherResultats() {
+		  const resultatsDiv = document.getElementById('resultats');
+		  const listeResultats = document.getElementById('liste-resultats');
 
-		// Nettoyage
-		listeResultats.innerHTML = '';
-		resultatsDiv.querySelectorAll('.back-btn').forEach(btn => btn.remove());
+		  // Nettoyage
+		  listeResultats.innerHTML = '';
+		  resultatsDiv.querySelectorAll('.back-btn').forEach(btn => btn.remove());
 
-		// Styles du tableau (fond blanc + lignes violettes)
-		const cellStyle   = 'border: 1px solid #8000ff; padding: 8px; font-size: 1em; color: #111; background-color: #ffffff;';
-		const headerStyle = 'border: 1px solid #8000ff; padding: 8px; font-size: 1em; font-weight: bold; background-color: #8000ff; color: #ffffff;';
+		  // Styles du tableau (fond blanc + lignes violettes)
+		  const cellStyle   = 'border: 1px solid #8000ff; padding: 8px; font-size: 1em; color: #111; background-color: #ffffff;';
+		  const headerStyle = 'border: 1px solid #8000ff; padding: 8px; font-size: 1em; font-weight: bold; background-color: #8000ff; color: #ffffff;';
 
-		joursChoisis.forEach(jour => {
-		  if (!donneesFestival[jour]) return;
+		  joursChoisis.forEach(jour => {
+			if (!donneesFestival[jour]) return;
+
+			// ---- Conteneur de jour
+			const section = document.createElement('section');
+			section.className = 'jour-section';
 
 			// ---- Titre de jour
 			const titre = document.createElement('h2');
 			titre.className = 'jour-titre';
 			titre.textContent = jour;
-			listeResultats.appendChild(titre);
+			section.appendChild(titre);
 
 			// ---- Récupère les choix sélectionnés (avec heures)
 			const selected = [];
@@ -825,25 +870,27 @@ td {
 			  if (!checked || checked.value === "Aucun") return;
 			  const artiste = slot.artistes.find(a => a.nom === checked.value);
 			  if (!artiste) return;
-				const [sMin, eMin] = intervalFor(slot.heure, artiste.fin);
 
-				// normalisation "lendemain" pour l’ordre et la timeline
-				let sNorm = sMin, eNorm = eMin;
-				if (sNorm != null && sNorm < ROLLOVER_MIN) { sNorm += 24*60; eNorm += 24*60; }
+			  const [sMin, eMin] = intervalFor(slot.heure, artiste.fin);
 
-				selected.push({
-				  start: sNorm, end: eNorm,                      // ← valeurs normalisées pour TRI & TIMELINE
-				  debutStr: slot.heure,
-				  finStr: toHHmm(eMin % (24*60)),                // ← affichage "humain" (00h15, 01h00…)
-				  nom: artiste.nom, scene: artiste.scene, style: artiste.style
-				});
+			  // normalisation "lendemain" pour l’ordre et la timeline
+			  let sNorm = sMin, eNorm = eMin;
+			  if (sNorm != null && sNorm < ROLLOVER_MIN) { sNorm += 24*60; eNorm += 24*60; }
+
+			  selected.push({
+				start: sNorm, end: eNorm,          // ← normalisé pour TRI & TIMELINE
+				debutStr: slot.heure,
+				finStr: toHHmm(eMin % (24*60)),    // ← affichage humain (00h15, 01h00…)
+				nom: artiste.nom, scene: artiste.scene, style: artiste.style
+			  });
 			});
 
 			// Rien de sélectionné pour ce jour
 			if (!selected.length){
 			  const p = document.createElement('p');
 			  p.textContent = "Aucun choix validé pour ce jour.";
-			  listeResultats.appendChild(p);
+			  section.appendChild(p);
+			  listeResultats.appendChild(section);
 			  return;
 			}
 
@@ -867,7 +914,6 @@ td {
 			}
 
 			const enriched = selected.map((cur, idx)=>{
-			  // on cherche le chevauchement le plus “impactant”
 			  let maxOv = 0, bestOtherIndex = -1, worstRemaining = durationOf(cur);
 			  for (let j=0;j<selected.length;j++){
 				if (j===idx) continue;
@@ -882,14 +928,9 @@ td {
 			  let status = null, note = "";
 			  if (maxOv>0 && bestOtherIndex>=0){
 				const other = selected[bestOtherIndex];
-				const edge = overlapEdge(cur, other); // "début" ou "fin" de l'autre
-				if (worstRemaining < WATCHABLE_MIN){
-				  status = 'conflict';
-				  note = `Chevauche ${maxOv} min ${edge} de ${other.nom}`;
-				} else {
-				  status = 'partial';
-				  note = `Chevauche ${maxOv} min ${edge} de ${other.nom}`;
-				}
+				const edge = overlapEdge(cur, other);
+				status = (worstRemaining < WATCHABLE_MIN) ? 'conflict' : 'partial';
+				note = `Chevauche ${maxOv} min ${edge} de ${other.nom}`;
 			  }
 			  return {...cur, status, note};
 			});
@@ -897,48 +938,77 @@ td {
 			// ---- Mini-timeline: échelle commune
 			const minStart = Math.min(...enriched.map(x=>x.start));
 			const maxEnd   = Math.max(...enriched.map(x=>x.end));
-			const span     = Math.max(1, maxEnd - minStart); // sûreté
+			const span     = Math.max(1, maxEnd - minStart);
 
 			// ---- Création du tableau
 			const table = document.createElement('table');
 
-			// En-têtes (Début / Fin / Artiste / Scène / Style / Note / Timeline)
+			// Largeurs de colonnes (début, fin, artiste, scène, style, note, timeline)
+			table.innerHTML = `
+			  <colgroup>
+				<col style="width:6.5%">
+				<col style="width:6.5%">
+				<col style="width:22%">
+				<col style="width:15%">
+				<col style="width:16%">
+				<col style="width:18%">
+				<col style="width:15%">
+			  </colgroup>
+			`;
+
+			// En-têtes
 			const headerRow = document.createElement('tr');
-			['Début','Fin','Artiste','Scène','Style','Note','Timeline'].forEach(text => {
+			['Début','Fin','Artiste','Scène','Style','Note','Timeline'].forEach((text, idx) => {
 			  const th = document.createElement('th');
 			  th.style.cssText = headerStyle;
 			  th.textContent = text;
+			  if (idx === 4) th.classList.add('col-style'); // 5e colonne = Style
 			  headerRow.appendChild(th);
 			});
+
 			table.appendChild(headerRow);
 
 			// Lignes
 			enriched.forEach(item=>{
 			  const tr = document.createElement('tr');
 
-			  // Début
-			  let td = document.createElement('td'); td.style.cssText = cellStyle; td.textContent = item.debutStr; tr.appendChild(td);
-			  // Fin
-			  td = document.createElement('td'); td.style.cssText = cellStyle; td.textContent = item.finStr; tr.appendChild(td);
-			  // Artiste
-			  td = document.createElement('td'); td.style.cssText = cellStyle; td.textContent = item.nom; tr.appendChild(td);
-			  // Scène
-			  td = document.createElement('td'); td.style.cssText = cellStyle; td.textContent = item.scene; tr.appendChild(td);
-			  // Style
-			  td = document.createElement('td'); td.style.cssText = cellStyle; td.textContent = item.style; tr.appendChild(td);
-			  // Note (badge)
-			  td = document.createElement('td'); td.style.cssText = cellStyle;
-			  if (item.note){
-				const b = document.createElement('span');
-				b.className = 'note-badge ' + (item.status || 'partial');
-				b.textContent = item.note;
-				td.appendChild(b);
-			  } else {
-				td.textContent = '';
-			  }
-			  tr.appendChild(td);
+			// Début
+			let td = document.createElement('td');
+			td.style.cssText = cellStyle;
+			td.classList.add('nowrap');
+			td.textContent = item.debutStr;
+			tr.appendChild(td);
 
-			  // Timeline
+			// Fin
+			td = document.createElement('td');
+			td.style.cssText = cellStyle;
+			td.classList.add('nowrap');
+			td.textContent = item.finStr;
+			tr.appendChild(td);
+
+			// Artiste
+			td = document.createElement('td'); td.style.cssText = cellStyle; td.textContent = item.nom; tr.appendChild(td);
+
+			// Scène
+			td = document.createElement('td'); td.style.cssText = cellStyle; td.textContent = item.scene; tr.appendChild(td);
+
+			// Style  ← on marque la colonne pour pouvoir la masquer en PDF si voulu
+			td = document.createElement('td'); td.style.cssText = cellStyle; td.classList.add('col-style'); td.textContent = item.style; tr.appendChild(td);
+
+			// Note (badge)
+			td = document.createElement('td');
+			td.style.cssText = cellStyle;
+			td.classList.add('col-note');        // <-- important
+			if (item.note){
+			  const b = document.createElement('span');
+			  b.className = 'note-badge ' + (item.status || 'partial');
+			  b.textContent = item.note;
+			  td.appendChild(b);
+			}
+			tr.appendChild(td);
+
+
+
 			  td = document.createElement('td'); td.style.cssText = cellStyle;
 			  const tl = document.createElement('div'); tl.className='tl-cell';
 			  const bar = document.createElement('div'); bar.className='tl-range';
@@ -955,21 +1025,22 @@ td {
 			  table.appendChild(tr);
 			});
 
-			listeResultats.appendChild(table);
+			// ✅ maintenant on place le tableau dans la section, puis la section dans la liste
+			section.appendChild(table);
+			listeResultats.appendChild(section);
+		  });
 
-		});
+		  // Bouton retour (unique)
+		  const backBtn = document.createElement('button');
+		  backBtn.type = 'button';
+		  backBtn.className = 'back-btn';
+		  backBtn.textContent = 'Revenir aux choix';
+		  backBtn.addEventListener('click', revenirAuxChoix);
+		  resultatsDiv.appendChild(backBtn);
 
-		// Bouton retour (unique)
-		const backBtn = document.createElement('button');
-		backBtn.type = 'button';
-		backBtn.className = 'back-btn';
-		backBtn.textContent = '⬅️ Revenir aux choix';
-		backBtn.addEventListener('click', revenirAuxChoix);
-		resultatsDiv.appendChild(backBtn); // <-- manquait
-
-		document.getElementById('choix').classList.add('hidden');
-		resultatsDiv.classList.remove('hidden');
-	  }
+		  document.getElementById('choix').classList.add('hidden');
+		  resultatsDiv.classList.remove('hidden');
+		}
 
 	  function revenirAuxChoix() {
 		const res = document.getElementById('resultats');
@@ -978,16 +1049,137 @@ td {
 		document.getElementById('choix').classList.remove('hidden');
 	  }
 
-	  function genererPDF() {
-		const { jsPDF } = window.jspdf;
-		const doc = new jsPDF('l', 'pt', 'a4');
-		doc.html(document.getElementById('liste-resultats'), {
-		  callback: function (doc) { doc.save('RunningOrder.pdf'); },
-		  margin: [40, 20, 40, 20],
-		  autoPaging: 'text',
-		  html2canvas: { scale: 0.8 }
-		});
-	  }
+		async function genererPDF() {
+		  const { jsPDF } = window.jspdf;
+
+		  // 👉 portrait ('p') ou paysage ('l')
+		  const doc = new jsPDF('l', 'pt', 'a4');
+
+		  const pageW   = doc.internal.pageSize.getWidth();
+		  const pageH   = doc.internal.pageSize.getHeight();
+		  const margin  = 28;
+		  const headH   = 18;                     // hauteur réservée au titre par page
+		  const contW   = pageW - margin * 2;     // zone utile (largeur)
+		  const contH   = pageH - margin * 2 - headH; // zone utile (hauteur sous le titre)
+		  const safeWpx = Math.floor(contW - 10); // marge anti-rognage pour la capture
+
+		  document.body.classList.add('pdf-mode');
+
+		  try {
+			const sections = Array.from(document.querySelectorAll('#liste-resultats .jour-section'));
+			if (!sections.length) {
+			  alert("Aucun résultat à exporter.");
+			  return;
+			}
+
+			for (const section of sections) {
+			  // -------- Prépare la capture
+			  const prev = { width: section.style.width, maxWidth: section.style.maxWidth };
+			  section.style.width = safeWpx + 'px';
+			  section.style.maxWidth = safeWpx + 'px';
+
+			  // Capture HD
+			  const canvas = await html2canvas(section, {
+				backgroundColor: '#ffffff',
+				scale: 2,
+				useCORS: true,
+				windowWidth: safeWpx
+			  });
+
+			  // Restaure styles
+			  section.style.width = prev.width;
+			  section.style.maxWidth = prev.maxWidth;
+
+			  // -------- Calcule les points de coupe alignés sur les <tr>
+			  // Facteur DOM -> Canvas
+			  const scaleDomToCanvas = canvas.width / section.clientWidth;
+
+			  // Limite de hauteur par page en PIXELS CANVAS
+			  const scalePdf   = (contW - 10) / canvas.width;
+			  const maxSlicePx = Math.floor(contH / scalePdf);
+
+			  // Collecte des bas de <tr> (en px canvas, relatifs au haut de la section)
+			  const sectionRect = section.getBoundingClientRect();
+			  const cuts = [0]; // début
+			  section.querySelectorAll('table').forEach(tbl => {
+				tbl.querySelectorAll('tr').forEach(tr => {
+				  const r = tr.getBoundingClientRect();
+				  const bottomRelDom = r.bottom - sectionRect.top;          // px DOM
+				  const bottomRelCv  = Math.floor(bottomRelDom * scaleDomToCanvas); // px canvas
+				  if (bottomRelCv > 0 && bottomRelCv < canvas.height) cuts.push(bottomRelCv);
+				});
+			  });
+			  cuts.push(canvas.height); // fin
+
+				// Détermine les tranches (pages) : on prend le DERNIER repère <= fenêtre
+				const slices = [];
+				let cur = 0;
+				while (cur < canvas.height) {
+				  const target = cur + maxSlicePx;
+
+				  // Tous les repères > cur et ≤ target
+				  const candidates = cuts.filter(c => c > cur && c <= target);
+
+				  let next;
+				  if (candidates.length) {
+					// on prend le plus grand (dernier) -> page bien remplie
+					next = candidates[candidates.length - 1];
+				  } else {
+					// pas de repère dans la fenêtre : on cherche le premier repère après target
+					next = cuts.find(c => c > target) ?? canvas.height;
+				  }
+
+				  if (next <= cur) next = Math.min(cur + maxSlicePx, canvas.height);
+
+				  slices.push([cur, next - cur]);
+				  cur = next;
+				}
+
+
+			  // -------- Ajoute les pages avec header
+			  const dayTitle = section.querySelector('.jour-titre')?.textContent?.trim() || 'Jour';
+			  const totalPages = slices.length;
+
+			  // Canvas pour découpe
+			  const slicer = document.createElement('canvas');
+			  const sctx   = slicer.getContext('2d', { willReadFrequently: true });
+			  slicer.width = canvas.width;
+
+			  slices.forEach(([y, h], idx) => {
+				slicer.height = h;
+				sctx.clearRect(0, 0, slicer.width, slicer.height);
+				sctx.drawImage(canvas, 0, y, canvas.width, h, 0, 0, slicer.width, h);
+
+				const imgData = slicer.toDataURL('image/jpeg', 0.92);
+
+				// Header
+				const pageLabel = `${dayTitle} — page ${idx + 1}/${totalPages}`;
+				doc.setFont('helvetica', 'bold');
+				doc.setFontSize(11);
+				doc.text(pageLabel, margin, margin + 10);
+
+				// Image (sous le header)
+				const imgW = contW - 10;
+				const imgH = h * ((contW - 10) / canvas.width);
+				doc.addImage(imgData, 'JPEG', margin, margin + headH, imgW, imgH);
+
+				// Page suivante si ce n'est pas la dernière
+				if (idx < slices.length - 1) doc.addPage();
+			  });
+
+			  // Page blanche entre les jours (sauf après le dernier jour)
+			  if (section !== sections[sections.length - 1]) doc.addPage();
+			}
+
+			doc.save('RunningOrder.pdf');
+
+		  } catch (err) {
+			console.error('Erreur PDF:', err);
+			alert('La génération du PDF a échoué (voir console).');
+		  } finally {
+			document.body.classList.remove('pdf-mode');
+		  }
+		}
 
 		document.addEventListener('change', (e) => {
 		  if (!e.target.matches('.option input[type="radio"]')) return;
@@ -1070,4 +1262,3 @@ td {
 
 </body>
 </html>
-
