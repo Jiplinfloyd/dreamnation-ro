@@ -427,170 +427,226 @@ body.pdf-mode .note-badge{ font-size: 11px; }
 <body>
   <h1>Fais ton choix pour chaque créneau</h1>
 
-  <div id="selection-jours">
-    <p>Quels jours fais-tu au festival ?</p>
-    <label><input type="checkbox" value="Vendredi 26" checked> Vendredi</label><br>
-    <label><input type="checkbox" value="Samedi 27" checked> Samedi</label><br>
-    <button id="btnStart" type="button">Commencer</button>
-  </div>
+<div id="selection-jours">
+  <p>Quels jours fais-tu au festival ?</p>
+  <label><input type="checkbox" value="Vendredi 26" checked> Vendredi 26</label><br>
+  <label><input type="checkbox" value="Samedi 27" checked> Samedi 27</label><br>
+  <button id="btnStart" type="button">Commencer</button>
+</div>
+
 
   <div id="choix" class="hidden"></div>
   <div id="resultats" class="hidden">
   <h2>Ton Running Order</h2>
   <ul id="liste-resultats"></ul>
   <button onclick="genererPDF()">📅 Télécharger en PDF</button>
+  <button type="button" id="btnResetMem">Effacer mes choix mémorisés</button>
 </div>
 
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script>
-	  let joursChoisis = [];
+	let donneesFestival = {
+	  "Samedi 27": [
+			{ heure: "00h00", artistes: [
+			  { nom: "LB AKA LABAT", style: "Electro / House", scene: "Lunar Stage", fin: "1h00" },
+			  { nom: "25EMEHEURE", style: "Hard Techno", scene: "Organik Stage", fin: "1h30" },
+			]},
+			{ heure: "00h15", artistes: [
+			  { nom: "WILKINSON", style: "Drum & Bass", scene: "Bassquake Stage", fin: "1h15" },
+			]},
+			{ heure: "1h00", artistes: [
+			  { nom: "FUNK TRIBU b2b MISCHLUFT", style: "Techno", scene: "Lunar Stage", fin: "2h15" },
+			]},
+			{ heure: "1h15", artistes: [
+			  { nom: "ANDY C", style: "Drum & Bass", scene: "Bassquake Stage", fin: "2h15" },
+			]},
+			{ heure: "1h30", artistes: [
+			  { nom: "NØNAME", style: "Techno / Electro", scene: "Organik Stage", fin: "3h00" },
+			]},
+			{ heure: "2h15", artistes: [
+			  { nom: "VINI VICI", style: "Psytrance", scene: "Lunar Stage", fin: "3h15" },
+			  { nom: "KAYZO b2b MUST DIE!", style: "Bass / Hard Dance / Dubstep", scene: "Bassquake Stage", fin: "3h15" },
+			]},
+			{ heure: "3h00", artistes: [
+			  { nom: "BALAGAN", style: "Techno", scene: "Organik Stage", fin: "4h00" },
+			]},
+			{ heure: "3h15", artistes: [
+			  { nom: "ASTRIX", style: "Psytrance", scene: "Lunar Stage", fin: "4h15" },
+			  { nom: "KANINE b2b SOTA", style: "Drum & Bass", scene: "Bassquake Stage", fin: "4h15" },
+			]},
+			{ heure: "4h00", artistes: [
+			  { nom: "OBSTN", style: "Techno", scene: "Organik Stage", fin: "5h00" },
+			]},
+			{ heure: "4h15", artistes: [
+			  { nom: "ACE VENTURA", style: "Progressive Psytrance", scene: "Lunar Stage", fin: "5h15" },
+			  { nom: "INFEKT b2b SAMPLIFIRE", style: "Riddim / Dubstep", scene: "Bassquake Stage", fin: "5h15" },
+			]},
+			{ heure: "5h00", artistes: [
+			  { nom: "RHADAMANTHE", style: "Techno", scene: "Organik Stage", fin: "6h00" },
+			]},
+			{ heure: "5h15", artistes: [
+			  { nom: "MANDIDEXTROUS", style: "Jungle / 160-170", scene: "Bassquake Stage", fin: "6h15" },
+			  { nom: "EARGASM GOD", style: "Techno", scene: "Lunar Stage", fin: "6h15" },
+			]},
+			{ heure: "20h30", artistes: [
+			  { nom: "HIBI", style: "Trancy/Groovy", scene: "Organik Stage", fin: "22h00" },
+			]},
+			{ heure: "21h00", artistes: [
+			  { nom: "ASDEK", style: "Bass House", scene: "Bassquake Stage", fin: "21h45" },
+			]},
+			{ heure: "21h10", artistes: [
+			  { nom: "HILIGHT TRIBE", style: "Trance / Tribal (Live)", scene: "Lunar Stage", fin: "22h40" },
+			]},
+			{ heure: "21h45", artistes: [
+			  { nom: "MALAA × ALTER EGO", style: "House / Bass House", scene: "Bassquake Stage", fin: "23h15" },
+			]},
+			{ heure: "22h00", artistes: [
+			  { nom: "PEAKSOU", style: "Trance/Hypertechno", scene: "Organik Stage", fin: "23h00" },
+			]},
+			{ heure: "23h00", artistes: [
+			  { nom: "PERCEVAL", style: "Psytrance", scene: "Lunar Stage", fin: "23h55" },
+			  { nom: "MANIL", style: "Hard Techno/Groove", scene: "Organik Stage", fin: "00h00" },
+			]},
+			{ heure: "23h15", artistes: [
+			  { nom: "ZOMBOY", style: "Dubstep", scene: "Bassquake Stage", fin: "00h15" },
+			]},
+	  ],
+	  "Vendredi 26": [
+			{ heure: "00h15", artistes: [
+			  { nom: "999999999", style: "Acid Techno", scene: "Pulsar Stage", fin: "1h15" },
+			]},
+			{ heure: "00h30", artistes: [
+			  { nom: "SUB ZERO PROJECT", style: "Hardstyle", scene: "Warzone Stage", fin: "1h30" },
+			]},
+			{ heure: "1h00", artistes: [
+			  { nom: "SIBI", style: "Trance/Hardstyle/Hardcore oldschool", scene: "2much stage", fin: "2h15" },
+			]},
+			{ heure: "1h15", artistes: [
+			  { nom: "OGUZ", style: "Techno", scene: "Pulsar Stage", fin: "2h15" },
+			]},
+			{ heure: "1h30", artistes: [
+			  { nom: "ROOLER", style: "Raw Hardstyle", scene: "Warzone Stage", fin: "2h30" },
+			]},
+			{ heure: "2h15", artistes: [
+			  { nom: "DYEN b2b STAN CHRIST", style: "Neorave / Hard Techno", scene: "Pulsar Stage", fin: "3h30" },
+			  { nom: "SHANIXX", style: "Techno bitchy 2000", scene: "2much stage", fin: "3h30" },
+			]},
+			{ heure: "2h30", artistes: [
+			  { nom: "BILLX b2b VANDAL", style: "Hardtek / Raggatek", scene: "Warzone Stage", fin: "3h30" },
+			]},
+			{ heure: "3h30", artistes: [
+			  { nom: "REINIER ZONNEVELD b2b ANGERFIST", style: "Techno", scene: "Pulsar Stage", fin: "4h30" },
+			  { nom: "SEFA", style: "Frenchcore", scene: "Warzone Stage", fin: "4h25" },
+			  { nom: "DJ SCHNAKE", style: "Chipiecore/Trance/happy Hardcore/pop", scene: "2much stage", fin: "4h45" },
+			]},
+			{ heure: "4h25", artistes: [
+			  { nom: "MISS K8 b2b ANIME", style: "Hardcore", scene: "Warzone Stage", fin: "5h20" },
+			]},
+			{ heure: "4h30", artistes: [
+			  { nom: "VIEZE ASBAK", style: "Hard Techno", scene: "Pulsar Stage", fin: "5h15" },
+			]},
+			{ heure: "4h45", artistes: [
+			  { nom: "AVENIR", style: "Acid rave/Hard Techno/Electro/Punk rock", scene: "2much stage", fin: "6h00" },
+			]},
+			{ heure: "5h15", artistes: [
+			  { nom: "HADES", style: "Melodic Industrial Techno", scene: "Pulsar Stage", fin: "6h15" },
+			]},
+			{ heure: "5h20", artistes: [
+			  { nom: "MAJOR CONSPIRACY b2b PARTYRAISER", style: "Hardcore Uptempo", scene: "Warzone Stage", fin: "6h15" },
+			]},
+			{ heure: "21h00", artistes: [
+			  { nom: "SKONE & PROTOSKEED present SILENCE", style: "Tekno", scene: "Warzone Stage", fin: "22h00" },
+			  { nom: "NICE KEED", style: "Fast & Hard Techno", scene: "Pulsar Stage", fin: "22h15" },
+			]},
+			{ heure: "22h00", artistes: [
+			  { nom: "SPICE UP!", style: "Tekno", scene: "Warzone Stage", fin: "23h00" },
+			  { nom: "LUX", style: "Hard Trance", scene: "2much stage", fin: "23h30" },
+			]},
+			{ heure: "22h15", artistes: [
+			  { nom: "ZORZA", style: "Hyper Techno", scene: "Pulsar Stage", fin: "23h15" },
+			]},
+			{ heure: "23h00", artistes: [
+			  { nom: "MAD DOG", style: "Hardcore italien", scene: "Warzone Stage", fin: "23h45" },
+			]},
+			{ heure: "23h15", artistes: [
+			  { nom: "ACENDANT VIERGE", style: "Avant-garde Electro", scene: "Pulsar Stage", fin: "00h15" },
+			]},
+			{ heure: "23h30", artistes: [
+			  { nom: "SHOSHANA", style: "Hard Techno/Ghetto beats/Groove", scene: "2much stage", fin: "1h00" },
+			]},
+			{ heure: "23h45", artistes: [
+			  { nom: "VON BIKRAV", style: "Gangsta rap Gabber", scene: "Warzone Stage", fin: "00h30" },
+			]},
+	  ],
+	};
+		
+		let joursChoisis = [];
 
-	  /* --- GARDE ICI TON OBJET donneesFestival TEL QUEL --- */
-		let donneesFestival = {
-		  "Samedi 27": [
-		  		{ heure: "20h30", artistes: [
-				  { nom: "HIBI", style: "Trancy/Groovy", scene: "Organik Stage", fin: "22h00" },
-				]},
-				{ heure: "21h00", artistes: [
-				  { nom: "ASDEK", style: "Bass House", scene: "Bassquake Stage", fin: "21h45" },
-				]},
-				{ heure: "21h10", artistes: [
-				  { nom: "HILIGHT TRIBE", style: "Trance / Tribal (Live)", scene: "Lunar Stage", fin: "22h40" },
-				]},
-				{ heure: "21h45", artistes: [
-				  { nom: "MALAA × ALTER EGO", style: "House / Bass House", scene: "Bassquake Stage", fin: "23h15" },
-				]},
-				{ heure: "22h00", artistes: [
-				  { nom: "PEAKSOU", style: "Trance/Hypertechno", scene: "Organik Stage", fin: "23h00" },
-				]},
-				{ heure: "23h00", artistes: [
-				  { nom: "PERCEVAL", style: "Psytrance", scene: "Lunar Stage", fin: "23h55" },
-				  { nom: "MANIL", style: "Hard Techno/Groove", scene: "Organik Stage", fin: "00h00" },
-				]},
-				{ heure: "23h15", artistes: [
-				  { nom: "ZOMBOY", style: "Dubstep", scene: "Bassquake Stage", fin: "00h15" },
-				]},
-				{ heure: "00h00", artistes: [
-				  { nom: "LB AKA LABAT", style: "Electro / House", scene: "Lunar Stage", fin: "1h00" },
-				  { nom: "25EMEHEURE", style: "Hard Techno", scene: "Organik Stage", fin: "1h30" },
-				]},
-				{ heure: "00h15", artistes: [
-				  { nom: "WILKINSON", style: "Drum & Bass", scene: "Bassquake Stage", fin: "1h15" },
-				]},
-				{ heure: "1h00", artistes: [
-				  { nom: "FUNK TRIBU b2b MISCHLUFT", style: "Techno", scene: "Lunar Stage", fin: "2h15" },
-				]},
-				{ heure: "1h15", artistes: [
-				  { nom: "ANDY C", style: "Drum & Bass", scene: "Bassquake Stage", fin: "2h15" },
-				]},
-				{ heure: "1h30", artistes: [
-				  { nom: "NØNAME", style: "Techno / Electro", scene: "Organik Stage", fin: "3h00" },
-				]},
-				{ heure: "2h15", artistes: [
-				  { nom: "VINI VICI", style: "Psytrance", scene: "Lunar Stage", fin: "3h15" },
-				  { nom: "KAYZO b2b MUST DIE!", style: "Bass / Hard Dance / Dubstep", scene: "Bassquake Stage", fin: "3h15" },
-				]},
-				{ heure: "3h00", artistes: [
-				  { nom: "BALAGAN", style: "Techno", scene: "Organik Stage", fin: "4h00" },
-				]},
-				{ heure: "3h15", artistes: [
-				  { nom: "ASTRIX", style: "Psytrance", scene: "Lunar Stage", fin: "4h15" },
-				  { nom: "KANINE b2b SOTA", style: "Drum & Bass", scene: "Bassquake Stage", fin: "4h15" },
-				]},
-				{ heure: "4h00", artistes: [
-				  { nom: "OBSTN", style: "Techno", scene: "Organik Stage", fin: "5h00" },
-				]},
-				{ heure: "4h15", artistes: [
-				  { nom: "ACE VENTURA", style: "Progressive Psytrance", scene: "Lunar Stage", fin: "5h15" },
-				  { nom: "INFEKT b2b SAMPLIFIRE", style: "Riddim / Dubstep", scene: "Bassquake Stage", fin: "5h15" },
-				]},
-				{ heure: "5h00", artistes: [
-				  { nom: "RHADAMANTHE", style: "Techno", scene: "Organik Stage", fin: "6h00" },
-				]},
-				{ heure: "5h15", artistes: [
-				  { nom: "MANDIDEXTROUS", style: "Jungle / 160-170", scene: "Bassquake Stage", fin: "6h15" },
-				  { nom: "EARGASM GOD", style: "Techno", scene: "Lunar Stage", fin: "6h15" },
-				]},
-		  ],
-		  "Vendredi 26": [
-		  		{ heure: "21h00", artistes: [
-				  { nom: "SKONE & PROTOSKEED present SILENCE", style: "Tekno", scene: "Warzone Stage", fin: "22h00" },
-				  { nom: "NICE KEED", style: "Fast & Hard Techno", scene: "Pulsar Stage", fin: "22h15" },
-				]},
-				{ heure: "22h00", artistes: [
-				  { nom: "SPICE UP!", style: "Tekno", scene: "Warzone Stage", fin: "23h00" },
-				  { nom: "LUX", style: "Hard Trance", scene: "2much stage", fin: "23h30" },
-				]},
-				{ heure: "22h15", artistes: [
-				  { nom: "ZORZA", style: "Hyper Techno", scene: "Pulsar Stage", fin: "23h15" },
-				]},
-				{ heure: "23h00", artistes: [
-				  { nom: "MAD DOG", style: "Hardcore italien", scene: "Warzone Stage", fin: "23h45" },
-				]},
-				{ heure: "23h15", artistes: [
-				  { nom: "ASCENDANT VIERGE", style: "Avant-garde Electro", scene: "Pulsar Stage", fin: "00h15" },
-				]},
-				{ heure: "23h30", artistes: [
-				  { nom: "SHOSHANA", style: "Hard Techno/Ghetto beats/Groove", scene: "2much stage", fin: "1h00" },
-				]},
-				{ heure: "23h45", artistes: [
-				  { nom: "VON BIKRAV", style: "Gangsta rap Gabber", scene: "Warzone Stage", fin: "00h30" },
-				]},
-				{ heure: "00h15", artistes: [
-				  { nom: "999999999", style: "Acid Techno", scene: "Pulsar Stage", fin: "1h15" },
-				]},
-				{ heure: "00h30", artistes: [
-				  { nom: "SUB ZERO PROJECT", style: "Hardstyle", scene: "Warzone Stage", fin: "1h30" },
-				]},
-				{ heure: "1h00", artistes: [
-				  { nom: "SIBI", style: "Trance/Hardstyle/Hardcore oldschool", scene: "2much stage", fin: "2h15" },
-				]},
-				{ heure: "1h15", artistes: [
-				  { nom: "OGUZ", style: "Techno", scene: "Pulsar Stage", fin: "2h15" },
-				]},
-				{ heure: "1h30", artistes: [
-				  { nom: "ROOLER", style: "Raw Hardstyle", scene: "Warzone Stage", fin: "2h30" },
-				]},
-				{ heure: "2h15", artistes: [
-				  { nom: "DYEN b2b STAN CHRIST", style: "Neorave / Hard Techno", scene: "Pulsar Stage", fin: "3h30" },
-				  { nom: "SHANIXX", style: "Techno bitchy 2000", scene: "2much stage", fin: "3h30" },
-				]},
-				{ heure: "2h30", artistes: [
-				  { nom: "BILLX b2b VANDAL", style: "Hardtek / Raggatek", scene: "Warzone Stage", fin: "3h30" },
-				]},
-				{ heure: "3h30", artistes: [
-				  { nom: "REINIER ZONNEVELD b2b ANGERFIST", style: "Techno", scene: "Pulsar Stage", fin: "4h30" },
-				  { nom: "SEFA", style: "Frenchcore", scene: "Warzone Stage", fin: "4h25" },
-				  { nom: "DJ SCHNAKE", style: "Chipiecore/Trance/happy Hardcore/pop", scene: "2much stage", fin: "4h45" },
-				]},
-				{ heure: "4h25", artistes: [
-				  { nom: "MISS K8 b2b ANIME", style: "Hardcore", scene: "Warzone Stage", fin: "5h20" },
-				]},
-				{ heure: "4h30", artistes: [
-				  { nom: "VIEZE ASBAK", style: "Hard Techno", scene: "Pulsar Stage", fin: "5h15" },
-				]},
-				{ heure: "4h45", artistes: [
-				  { nom: "AVENIR", style: "Acid rave/Hard Techno/Electro/Punk rock", scene: "2much stage", fin: "6h00" },
-				]},
-				{ heure: "5h15", artistes: [
-				  { nom: "HADES", style: "Melodic Industrial Techno", scene: "Pulsar Stage", fin: "6h15" },
-				]},
-				{ heure: "5h20", artistes: [
-				  { nom: "MAJOR CONSPIRACY b2b PARTYRAISER", style: "Hardcore Uptempo", scene: "Warzone Stage", fin: "6h15" },
-				]},
-		  ],
-		};
+		// --- Mémoire des choix (clé spécifique à la page/festival) ---
+		const STORAGE_KEY = `RO:${location.pathname}:${document.title}`;
 
-		// "21h15" -> minutes depuis 00h00
+		// Sauvegarde les radios sélectionnées (un par créneau)
+		function saveSelections(){
+		  const data = {};
+		  document.querySelectorAll('#choix input[type=radio]:checked').forEach(r => {
+			data[r.name] = r.value; // ex: { "Vendredi 18_21:40": "Hamza" }
+		  });
+		  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch {}
+		}
+
+		// Recharge les sélections et coche les bons boutons
+		function loadSelections(){
+		  let data;
+		  try { data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { data = {}; }
+		  Object.entries(data).forEach(([name, val]) => {
+			// coche la valeur sauvegardée si le bouton existe encore
+			const sel = document.querySelector(
+			  `#choix input[type="radio"][name="${CSS.escape(name)}"][value="${CSS.escape(val)}"]`
+			);
+			if (sel) {
+			  sel.checked = true;
+			  // visuel: applique la classe .selected comme quand on clique
+			  const options = sel.closest('.options');
+			  options?.querySelectorAll('label').forEach(l => l.classList.remove('selected'));
+			  sel.closest('label')?.classList.add('selected');
+			}
+		  });
+		}
+
+		// Sauvegarde auto si l’utilisateur quitte la page
+		window.addEventListener('beforeunload', saveSelections);
+
+		// Sauvegarde à chaque changement de choix
+		document.addEventListener('change', (e) => {
+		  if (e.target.matches('#choix input[type=radio]')) {
+			saveSelections();
+		  }
+		});
+
+
+		// "21h15" ou "21:15" -> minutes depuis 00h00
 		function toMin(str){
 		  if (!str) return null;
-		  const m = str.match(/^(\d{1,2})h(\d{0,2})$/i);
-		  if (!m) return null;
-		  const h = parseInt(m[1],10);
-		  const min = m[2] ? parseInt(m[2],10) : 0;
-		  return h*60 + min;
+
+		  // 1) "HHhMM" ou "HHh"
+		  let m = str.match(/^(\d{1,2})h(\d{0,2})$/i);
+		  if (m) {
+			const h = parseInt(m[1],10);
+			const min = m[2] ? parseInt(m[2],10) : 0;
+			return h*60 + min;
+		  }
+
+		  // 2) "HH:MM"
+		  m = str.match(/^(\d{1,2}):(\d{2})$/);
+		  if (m) {
+			const h = parseInt(m[1],10);
+			const min = parseInt(m[2],10);
+			return h*60 + min;
+		  }
+
+		  return null;
 		}
 		// minutes -> "21h15"
 		function toHHmm(total){
@@ -755,7 +811,7 @@ body.pdf-mode .note-badge{ font-size: 11px; }
 		genererChoix();
 	  }
 
-	  function genererChoix() {
+		function genererChoix() {
 		  const choixDiv = document.getElementById('choix');
 		  choixDiv.innerHTML = '';
 
@@ -765,7 +821,17 @@ body.pdf-mode .note-badge{ font-size: 11px; }
 			jourDiv.innerHTML = `<h3>${jour}</h3>`;
 			if (!donneesFestival[jour]) return;
 
-			donneesFestival[jour].forEach(slot => {
+			// 1) TRI avec “après-minuit => +24h”
+			const slots = [...donneesFestival[jour]].sort((a, b) => {
+			  const sa = toMin(a.heure);
+			  const sb = toMin(b.heure);
+			  const na = (sa != null && sa < ROLLOVER_MIN) ? sa + 24*60 : sa;
+			  const nb = (sb != null && sb < ROLLOVER_MIN) ? sb + 24*60 : sb;
+			  return (na ?? 0) - (nb ?? 0);
+			});
+
+			// 2) Construction UI UNIQUEMENT à partir de `slots`
+			slots.forEach(slot => {
 			  const slotDiv = document.createElement('div');
 			  slotDiv.className = 'slot';
 
@@ -778,7 +844,7 @@ body.pdf-mode .note-badge{ font-size: 11px; }
 			  options.className = 'options';
 			  const groupName = `${jour}_${slot.heure}`;
 
-			  // "Aucun"
+			  // "Aucun" (par défaut sélectionné)
 			  const optNone = document.createElement('label');
 			  optNone.className = 'option option-none selected';
 			  optNone.innerHTML = `
@@ -788,37 +854,37 @@ body.pdf-mode .note-badge{ font-size: 11px; }
 			  `;
 			  options.appendChild(optNone);
 
-			// Artistes
-			(slot.artistes || []).forEach((a, idx) => {
-			const [sMin, eMin] = intervalFor(slot.heure, a.fin);
-			const endStr = (eMin != null)
-			  ? toHHmm(eMin % (24*60))
-			  : (toMin(slot.heure) != null ? toHHmm((toMin(slot.heure) + 45) % (24*60)) : "");
+			  // Artistes
+			  (slot.artistes || []).forEach((a, idx) => {
+				const [sMin, eMin] = intervalFor(slot.heure, a.fin);
+				const endStr = (eMin != null)
+				  ? toHHmm(eMin % (24*60))
+				  : (toMin(slot.heure) != null ? toHHmm((toMin(slot.heure)+45) % (24*60)) : "");
 
-			  const id = `${groupName}_art${idx}`;
-			  const opt = document.createElement('label');
-			  opt.className = 'option';
-			// normalisation "lendemain" pour les sets après minuit (ex: 00h30–01h30)
-			let sNorm = sMin, eNorm = eMin;
-			if (sNorm != null && sNorm < ROLLOVER_MIN) { sNorm += 24*60; eNorm += 24*60; }
+				const id = `${groupName}_art${idx}`;
+				const opt = document.createElement('label');
+				opt.className = 'option';
 
-			opt.dataset.jour  = jour;
-			opt.dataset.start = sNorm ?? '';
-			opt.dataset.end   = eNorm ?? '';
+				// normalisation "lendemain"
+				let sNorm = sMin, eNorm = eMin;
+				if (sNorm != null && sNorm < ROLLOVER_MIN) { sNorm += 24*60; eNorm += 24*60; }
 
+				opt.dataset.jour  = jour;
+				opt.dataset.start = sNorm ?? '';
+				opt.dataset.end   = eNorm ?? '';
 
-			  opt.innerHTML = `
-				<input type="radio" id="${id}" name="${groupName}" value="${a.nom}">
-				<strong>${a.nom}</strong>
-				<small>${a.style} <span style="opacity:.6">•</span> ${a.scene}<br>
-				<span class="time">${slot.heure}${endStr ? '–'+endStr : ''}</span></small>
-			  `;
+				opt.innerHTML = `
+				  <input type="radio" id="${id}" name="${groupName}" value="${a.nom}">
+				  <strong>${a.nom}</strong>
+				  <small>${a.style} <span style="opacity:.6">•</span> ${a.scene}<br>
+				  <span class="time">${slot.heure}${endStr ? '–'+endStr : ''}</span></small>
+				`;
 				const note = document.createElement('div');
 				note.className = 'ov-note';
 				opt.appendChild(note);
-			  options.appendChild(opt);
-			});
 
+				options.appendChild(opt);
+			  });
 
 			  slotDiv.appendChild(options);
 			  jourDiv.appendChild(slotDiv);
@@ -827,13 +893,17 @@ body.pdf-mode .note-badge{ font-size: 11px; }
 			choixDiv.appendChild(jourDiv);
 		  });
 
-		  // ← Un SEUL bouton, ajouté proprement en JS
+		  // 3) Bouton unique “Valider mes choix”
 		  const validateBtn = document.createElement('button');
 		  validateBtn.type = 'button';
 		  validateBtn.textContent = 'Valider mes choix';
 		  validateBtn.addEventListener('click', afficherResultats);
 		  choixDiv.appendChild(validateBtn);
-		  recomputeAllConflicts();  // première passe une fois l'UI construite
+
+		  // 4) Premier calcul de conflits
+		  loadSelections();          // <-- recharge les choix depuis la mémoire
+		  recomputeAllConflicts();
+
 		  choixDiv.classList.remove('hidden');
 		}
 
@@ -1255,6 +1325,17 @@ body.pdf-mode .note-badge{ font-size: 11px; }
 	  const start = document.getElementById('btnStart');
 	  if (start) start.addEventListener('click', demarrerChoix);
 	  
+	// --- Bouton "Effacer mes choix mémorisés" ---
+	document.getElementById('btnResetMem')?.addEventListener('click', () => {
+	  localStorage.removeItem(STORAGE_KEY);
+	  // Remet "Aucun" partout
+	  document.querySelectorAll('#choix .option-none input[type=radio]').forEach(r => r.checked = true);
+	  document.querySelectorAll('#choix .options label').forEach(l => l.classList.remove('selected'));
+	  document.querySelectorAll('#choix .option-none').forEach(l => l.classList.add('selected'));
+	  saveSelections();
+	  recomputeAllConflicts();
+	});
+ 
 });
 
 
